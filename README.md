@@ -31,6 +31,18 @@ Install the above packages, then create `.prettierrc.json` file in the project r
 
 > Now, you can create `.prettierignore` file in the root, to mention, which folders or files can be ignored during formatting.
 
+### Eslint Rules
+
+this is an optional setting which I prefer. You can remove this, if you don't like to get errors when using `console.log` statements. But this actually help before commiting the code, sometimes developers do forget to remove `console.log` which leads to heavier bundle size.
+
+```cjs
+{
+	rules: {
+		'no-console': ['error', { allow: ['warn', 'error'] }],
+	},
+}
+```
+
 ## React + TypeScript + Vite -- Official Comes with ViteJS
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
