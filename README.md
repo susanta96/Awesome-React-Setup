@@ -43,6 +43,90 @@ this is an optional setting which I prefer. You can remove this, if you don't li
 }
 ```
 
+### Setup Conventional Commits with husky
+
+This will require, if you're in a team environment, which is will force developer to write conventional commits.
+
+> You can remove husky, conventional commits, commitizen, if you're setting up only for personl projects.
+
+```sh
+pnpm dlx husky-init && pnpm install
+```
+
+It will:
+
+1. Add `prepare` script to package.json
+2. Create a sample pre-commit hook that you can edit (by default, npm test will run when you commit)
+3. You can change, from default to set you linting rules and lint fix commands. (we're making it, <b>npx lint-staged</b>, instead of pnpm test).
+
+```sh
+pnpm add --save-dev lint-staged
+```
+
+lint staged will help you to run eslint or any formatting only on staged files, not full repo.
+this is actually a very good, pre-commit hooks to be run.
+
+Also add this to package.json:
+
+```json
+{
+	"lint-staged": {
+		"*.(js|ts|tsx|jsx)": "prettier --write --ignore-unknown"
+	}
+}
+```
+
+To add another hook use husky add. For example:
+
+```sh
+pnpm husky add .husky/commit-msg 'echo "something"'
+```
+
+After running this, it will create an file / hooks in `.husky` folder. There, we'll add conventional commits bash script.
+
+```bash
+#!/usr/bin/env sh
+if ! head -1 "$1" | grep -qE "^(feat|fix|chore|docs|test|style|refactor|perf|build|ci|revert)(\(.+?\))?: .{1,}$"; then
+    echo "Aborting commit. Your commit message is invalid." >&2
+    exit 1
+fi
+if ! head -1 "$1" | grep -qE "^.{1,88}$"; then
+    echo "Aborting commit. Your commit message is too long." >&2
+    exit 1
+fi
+```
+
+this will make sure you're following the conventional pattern. Now, we just need to setup another thing, called `commitizen`, for helping developers to write conventional commits using CLI.
+
+```sh
+pnpm add -g commitizen
+```
+
+```sh
+commitizen init cz-conventional-changelog --pnpm --save-dev --save-exact
+```
+
+After this almost you're ready to have proper commit setup. just add new script to package.json:
+
+```json
+{
+	"scripts": {
+		"cz": "git cz",
+		"acp": "git add . && git cz && git push" //optional
+	}
+}
+```
+
+Thats it. Done ✅ .
+
+#### FYI -- Uninstall
+
+If you really want to Uninstall husky and other hooks
+
+```sh
+pnpm remove husky && git config --unset core.hooksPath
+```
+
 ## React + TypeScript + Vite -- Official Comes with ViteJS
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
